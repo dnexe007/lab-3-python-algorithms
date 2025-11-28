@@ -73,7 +73,6 @@ class Node:
         """
         self.val: Any = val
         self.nxt: Optional['Node'] = nxt
-        # Явно объявляем атрибут min
         self.min: Any
         if nxt is not None:
             self.min = min(nxt.min, val)
@@ -144,13 +143,14 @@ class LinkedListStack:
 
 class QueueStack:
     """
-    Стек на основе двух очередей
+    Стек на основе двух очередей с поддержкой операции нахождения минимума
     """
 
     def __init__(self) -> None:
         """Инициализирует пустой стек"""
         self._q1: Queue[Any] = Queue()
         self._length: int = 0
+        self._min_values: list[Any] = []
 
     def __len__(self) -> int:
         """Возвращает количество элементов в стеке"""
@@ -162,8 +162,22 @@ class QueueStack:
 
         :param val: Значение для добавления в стек
         """
+        min_val = self._min_values[-1] if self._min_values else val
+        min_val = min(min_val, val)
+        self._min_values.append(min_val)
         self._q1.put(val)
         self._length += 1
+
+    def min(self) -> Any:
+        """
+        Возвращает минимальный элемент в стеке
+
+        :return: Минимальный элемент в стеке
+        :raises IndexError: Если стек пуст
+        """
+        if self._length == 0:
+            raise IndexError('Stack is empty')
+        return self._min_values[-1]
 
     def pop(self) -> Any:
         """
@@ -173,7 +187,7 @@ class QueueStack:
         :raises IndexError: Если стек пуст
         """
         if self._length == 0:
-            raise IndexError('Queue is empty')
+            raise IndexError('Stack is empty')
 
         _q2: Queue[Any] = Queue()
         for i in range(self._length - 1):
@@ -181,6 +195,7 @@ class QueueStack:
         value = self._q1.get()
         self._q1 = _q2
         self._length -= 1
+        self._min_values.pop()
         return value
 
     def peek(self) -> Any:
@@ -191,7 +206,7 @@ class QueueStack:
         :raises IndexError: Если стек пуст
         """
         if self._length == 0:
-            raise IndexError('Queue is empty')
+            raise IndexError('Stack is empty')
 
         _q2: Queue[Any] = Queue()
         value: Any = None

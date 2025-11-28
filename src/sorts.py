@@ -117,6 +117,10 @@ def bucket_sort(arr: List[Union[int, float]], key: Optional[Callable[[Union[int,
     :param key: key функция (опционально)
     :return: отсортированный список
     """
+    for i in arr:
+        if not isinstance(i, (int, float)):
+            raise TypeError("bucket sort only works with numbers")
+
     arr = arr.copy()
     if not arr:
         return arr
@@ -138,7 +142,7 @@ def bucket_sort(arr: List[Union[int, float]], key: Optional[Callable[[Union[int,
     arr.clear()
     for bucket in buckets:
         if bucket:
-            arr.extend(quick_sort(bucket, key))
+            arr.extend(heap_sort(bucket, key))
 
     return arr
 
@@ -150,6 +154,10 @@ def counting_sort(arr: List[int]) -> List[int]:
     :param arr: список для сортировки
     :return: отсортированный список
     """
+    for i in arr:
+        if not isinstance(i, int):
+            raise TypeError("counting sort only works with integer numbers")
+
     arr = arr.copy()
     if not arr:
         return arr
@@ -168,7 +176,6 @@ def counting_sort(arr: List[int]) -> List[int]:
             arr.append(min_element + i)
 
     return arr
-
 
 def get_digit(num: int, digit: int) -> int:
     """
@@ -194,8 +201,9 @@ def radix_sort(arr: List[int]) -> List[int]:
     if not arr:
         return arr
 
-    if any(x < 0 or x % 1 != 0 for x in arr):
-        raise ValueError("radix sort only works with natural numbers")
+    for i in arr:
+        if not isinstance(i, int) or i < 0:
+            raise TypeError("counting sort only works with integer non-negative numbers")
 
     max_digits = len(str(max(arr)))
 

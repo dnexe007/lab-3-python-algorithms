@@ -29,9 +29,8 @@ def stack_test(stack: Union[ListStack, LinkedListStack, QueueStack]) -> None:
     stack.push(2)
     stack.push(3)
 
-    # Проверка минимального элемента (для QueueStack эта функциональность не реализована)
-    if not isinstance(stack, QueueStack):
-        assert stack.min() == 1
+    # Проверка минимального элемента
+    assert stack.min() == 1
 
     # Тестирование операций pop и peek
     assert stack.pop() == 3
