@@ -1,11 +1,11 @@
 from random import choice
-from typing import List, TypeVar, Optional, Callable, Union, cast
+from typing import List, TypeVar, Optional, Callable
 
 T = TypeVar('T')
-R = TypeVar('R', bound=Union[int, float, str])
+R = TypeVar('R')
 
 
-def key_val(var: T, key: Optional[Callable[[T], R]] = None) -> R:
+def key_val(var: T, key: Optional[Callable[[T], T | R]] = None) -> T | R:
     """
     применяет функцию key к значению, если она не None, либо
     возвращает значение в исходном виде
@@ -15,7 +15,7 @@ def key_val(var: T, key: Optional[Callable[[T], R]] = None) -> R:
     :return: значение после применения функции, либо исходное
     """
     if key is None:
-        return cast(R, var)
+        return var
     return key(var)
 
 
@@ -30,7 +30,7 @@ def bubble_sort(arr: List[T], key: Optional[Callable[[T], R]] = None) -> List[T]
     arr = arr.copy()
     for i in range(len(arr) - 1):
         for j in range(len(arr) - i - 1):
-            if key_val(arr[j], key) > key_val(arr[j + 1], key):  # type: ignore[operator]
+            if key_val(arr[j], key) > key_val(arr[j + 1], key):
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
     return arr
 
@@ -54,7 +54,7 @@ def quick_sort(arr: List[T], key: Optional[Callable[[T], R]] = None) -> List[T]:
 
     for item in arr:
         item_key = key_val(item, key)
-        if item_key > start:  # type: ignore[operator]
+        if item_key > start:
             higher.append(item)
         elif item_key == start:
             equal.append(item)
@@ -77,10 +77,10 @@ def heapify(arr: List[T], index: int, length: int, key: Optional[Callable[[T], R
     left = 2 * index + 1
     right = 2 * index + 2
 
-    if left < length and key_val(arr[left], key) > key_val(arr[largest], key):  # type: ignore[operator]
+    if left < length and key_val(arr[left], key) > key_val(arr[largest], key):
         largest = left
 
-    if right < length and key_val(arr[right], key) > key_val(arr[largest], key):  # type: ignore[operator]
+    if right < length and key_val(arr[right], key) > key_val(arr[largest], key):
         largest = right
 
     if largest != index:
@@ -109,7 +109,7 @@ def heap_sort(arr: List[T], key: Optional[Callable[[T], R]] = None) -> List[T]:
     return arr
 
 
-def bucket_sort(arr: List[Union[int, float]], key: Optional[Callable[[Union[int, float]], Union[int, float]]] = None) -> List[Union[int, float]]:
+def bucket_sort(arr: List[int | float], key: Optional[Callable[[int | float], int | float]] = None) -> List[int | float]:
     """
     корзинная сортировка
 
@@ -125,7 +125,7 @@ def bucket_sort(arr: List[Union[int, float]], key: Optional[Callable[[Union[int,
     if not arr:
         return arr
 
-    buckets: List[List[Union[int, float]]] = [[] for _ in range(10)]
+    buckets: List[List[int | float]] = [[] for _ in range(10)]
     min_element = min(key_val(item, key) for item in arr)
     max_element = max(key_val(item, key) for item in arr)
 
